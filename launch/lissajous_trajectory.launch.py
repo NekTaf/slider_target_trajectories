@@ -12,27 +12,10 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     return LaunchDescription([
 
-        DeclareLaunchArgument('lissa_A', default_value='2.0', description='Amplitude A (float)'),
-        DeclareLaunchArgument('lissa_B', default_value='2.0', description='Amplitude B (float)'),
-        DeclareLaunchArgument('lissa_a', default_value='1', description='Frequency a (int)'),
-        DeclareLaunchArgument('lissa_b', default_value='2', description='Frequency b (int)'),
-        DeclareLaunchArgument('lissa_delta', default_value='1.0', description='Phase delta (float)'),
-        DeclareLaunchArgument('lissa_omega', default_value='0.05', description='Angular frequency (float)'),
-
         Node(
             package='slider_target_trajectories',
             executable='lissajous_trajectory',
             name='lissajous_trajectory',
-            parameters=[{
-                'lissa_A': LaunchConfiguration('lissa_A'),
-                'lissa_B': LaunchConfiguration('lissa_B'),
-                'lissa_a': LaunchConfiguration('lissa_a'),
-                'lissa_b': LaunchConfiguration('lissa_b'),
-                'lissa_delta': LaunchConfiguration('lissa_delta'),
-                'lissa_omega': LaunchConfiguration('lissa_omega'),
-                'frame_id': 'world',
-                'publish_rate': 10.0,
-            }],
             output='screen',
         ),
     ])

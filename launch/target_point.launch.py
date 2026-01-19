@@ -12,20 +12,9 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     return LaunchDescription([
-
-        DeclareLaunchArgument('target_x', default_value='0.0', description=''),
-        DeclareLaunchArgument('target_y', default_value='0.0', description=''),
-
         Node(
             package='slider_target_trajectories',  
             executable='target_point',
             name='target_point',
-            parameters=[{
-                'frame_id': 'world',
-                'publish_rate': 10.0,
-                'target_x': LaunchConfiguration('target_x'),
-                'target_y': LaunchConfiguration('target_y'),
-            }],
         )
-        
     ])

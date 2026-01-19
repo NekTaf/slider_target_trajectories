@@ -6,6 +6,8 @@ from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from rclpy.qos import QoSPresetProfiles
 
+from .config import TargetTrajectoriesCfg
+
 def lissajous_state(
     t: float,
     center: Tuple[float, float, float],
@@ -28,32 +30,17 @@ class LissajousTrajectory(Node):
     def __init__(self):
         super().__init__('lissajous_trajectory')
 
-        self.declare_parameter('frame_id', 'world')
-        self.declare_parameter('publish_rate', 10.0)
-        self.declare_parameter('lissa_A', 2.0)
-        self.declare_parameter('lissa_B', 2.0)
-        self.declare_parameter('lissa_a', 1)
-        self.declare_parameter('lissa_b', 2)
-        self.declare_parameter('lissa_delta', 0.0)
-        self.declare_parameter('lissa_omega', 0.05)
-
-        frame = self.get_parameter('frame_id').value
-        rate = float(self.get_parameter('publish_rate').value)
-        self.A = float(self.get_parameter('lissa_A').value)
-        self.B = float(self.get_parameter('lissa_B').value)
-        self.a = int(self.get_parameter('lissa_a').value)
-        self.b = int(self.get_parameter('lissa_b').value)
-        self.delta = float(self.get_parameter('lissa_delta').value)
-        self.omega = float(self.get_parameter('lissa_omega').value)
-
-        self.dt = 1.0 / rate
+        self.dt = 1.0 / TargetTrajectoriesCfg.publish_frequency
         self.t = 0.0
 
         self.msg = Odometry()
-        self.msg.header.frame_id = frame
+        self.msg.header.frame_id = TargetTrajectoriesCfg.frame
+
         (x, y, z), (vx, vy, vz) = lissajous_state(
             0.0, (0.0, 0.0, 0.0),
-            self.A, self.B, self.a, self.b, self.delta, self.omega,
+            TargetTrajectoriesCfg.A, TargetTrajectoriesCfg.B, 
+            TargetTrajectoriesCfg.a, TargetTrajectoriesCfg.b, 
+            TargetTrajectoriesCfg.delta, TargetTrajectoriesCfg.omega,
         )
         self.msg.pose.pose.position.x = x
         self.msg.pose.pose.position.y = y
@@ -72,7 +59,9 @@ class LissajousTrajectory(Node):
         self.t += self.dt
         (x, y, z), (vx, vy, vz) = lissajous_state(
             self.t, (0.0, 0.0, 0.0),
-            self.A, self.B, self.a, self.b, self.delta, self.omega,
+            TargetTrajectoriesCfg.A, TargetTrajectoriesCfg.B, 
+            TargetTrajectoriesCfg.a, TargetTrajectoriesCfg.b,
+            TargetTrajectoriesCfg.delta, TargetTrajectoriesCfg.omega,
         )
         self.msg.header.stamp = self.get_clock().now().to_msg()
         self.msg.pose.pose.position.x = x
